@@ -6,12 +6,7 @@ local M = {}
 
 --- @class window.Opts
 --- @field floating floating.Opts
---- @field height number?
---- @field width number?
---- @field row number?
---- @field col number?
---- @field border string?
---- @field title string?
+--- @field opts vim.api.keyset.win_config?
 
 --- Takes options as argument to create a floating window
 --- @param opts window.Opts
@@ -39,15 +34,15 @@ M.create_floating_window = function(opts)
   -- Define the configuration for the floating window
   local win_config = {
     relative = "editor",
-    width = opts.width or float_width,
-    height = opts.height or float_height,
-    row = opts.row or row,
-    col = opts.col or col,
+    width = float_width,
+    height = float_height,
+    row = row,
+    col = col,
     style = "minimal",
-    border = opts.border or "rounded",
+    border = "rounded",
   }
 
-  local win = vim.api.nvim_open_win(buf, true, win_config)
+  local win = vim.api.nvim_open_win(buf, true, opts.opts or win_config)
 
   return { buf = buf, win = win }
 end
