@@ -5,13 +5,15 @@ local M = {}
 --- @field win integer
 
 --- @class window.Opts
---- @field buf integer
+--- @field floating floating.Opts
 --- @field height number?
 --- @field width number?
+--- @field row number?
+--- @field col number?
 --- @field border string?
 --- @field title string?
 
---- comment
+--- Takes options as argument to create a floating window
 --- @param opts window.Opts
 --- @return floating.Opts
 M.create_floating_window = function(opts)
@@ -28,8 +30,8 @@ M.create_floating_window = function(opts)
 
   local buf = nil
 
-  if vim.api.nvim_buf_is_valid(opts.buf) then
-    buf = opts.buf
+  if vim.api.nvim_buf_is_valid(opts.floating.buf) then
+    buf = opts.floating.buf
   else
     buf = vim.api.nvim_create_buf(false, true)
   end
@@ -39,8 +41,8 @@ M.create_floating_window = function(opts)
     relative = "editor",
     width = opts.width or float_width,
     height = opts.height or float_height,
-    row = row,
-    col = col,
+    row = opts.row or row,
+    col = opts.col or col,
     style = "minimal",
     border = opts.border or "rounded",
   }
@@ -59,19 +61,18 @@ end
 
 --- Takes text as argument to create a floating window
 --- @param opts text.Window.Opts
+--- @deprecated -- Use create_floating_window and set buffer text directly
 M.create_floating_text_window = function(opts)
-  if not vim.api.nvim_win_is_valid(opts.state.floating.win) then
-    opts.state.floating = M.create_floating_window({ buf = opts.state.floating.buf })
-  else
-    vim.api.nvim_win_hide(opts.state.floating.win)
-  end
+  local floating
+
+  floating = M.create_floating_window({ floating = opts.state.floating })
 
   local lines = vim.split(opts.text, "\n")
 
   -- Clear the buffer first
-  vim.api.nvim_buf_set_lines(opts.state.floating.buf, 0, -1, false, {})
+  vim.api.nvim_buf_set_lines(floating.buf, 0, -1, false, {})
 
-  vim.api.nvim_buf_set_lines(opts.state.floating.buf, 0, #lines, false, lines)
+  vim.api.nvim_buf_set_lines(floating.buf, 0, #lines, false, lines)
 
   vim.api.nvim_buf_set_keymap(
     opts.state.floating.buf,
@@ -80,6 +81,8 @@ M.create_floating_text_window = function(opts)
     "<Cmd>q<CR>",
     { noremap = true, silent = true }
   )
+
+  return { buf = floating.buf, win = floating.win }
 end
 
 return M
