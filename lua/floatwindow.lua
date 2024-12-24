@@ -6,6 +6,10 @@ local M = {}
 
 --- @class window.Opts
 --- @field buf integer
+--- @field height number?
+--- @field width number?
+--- @field border string?
+--- @field title string?
 
 --- comment
 --- @param opts window.Opts
@@ -33,12 +37,12 @@ M.create_floating_window = function(opts)
   -- Define the configuration for the floating window
   local win_config = {
     relative = "editor",
-    width = float_width,
-    height = float_height,
+    width = opts.width or float_width,
+    height = opts.height or float_height,
     row = row,
     col = col,
     style = "minimal",
-    border = "rounded",
+    border = opts.border or "rounded",
   }
 
   local win = vim.api.nvim_open_win(buf, true, win_config)
