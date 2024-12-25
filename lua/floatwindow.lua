@@ -7,6 +7,7 @@ local M = {}
 --- @class window.Opts
 --- @field floating floating.Opts
 --- @field opts vim.api.keyset.win_config?
+--- @field enter boolean|nil
 
 --- Takes options as argument to create a floating window
 --- @param opts window.Opts
@@ -42,7 +43,9 @@ M.create_floating_window = function(opts)
     border = "rounded",
   }
 
-  local win = vim.api.nvim_open_win(buf, true, opts.opts or win_config)
+  local enter = opts.enter == nil and true or opts.enter
+
+  local win = vim.api.nvim_open_win(buf, enter, opts.opts or win_config)
 
   return { buf = buf, win = win }
 end
