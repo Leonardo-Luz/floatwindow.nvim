@@ -49,7 +49,7 @@ M.create_floating_window = function(opts)
     enter = opts.enter
   end
 
-  local win = vim.api.nvim_open_win(buf, enter, opts.opts or win_config)
+  local win = vim.api.nvim_open_win(buf, enter or false, opts.opts or win_config)
 
   return { buf = buf, win = win }
 end
