@@ -13,7 +13,7 @@ local M = {}
 --- @param opts window.Opts
 --- @return floating.Opts
 M.create_floating_window = function(opts)
-  local win_width = vim.api.nvim_win_get_width(0) -- Current window width
+  local win_width = vim.api.nvim_win_get_width(0)   -- Current window width
   local win_height = vim.api.nvim_win_get_height(0) -- Current window height
 
   -- Calculate 80% of the current window size
@@ -43,9 +43,13 @@ M.create_floating_window = function(opts)
     border = "rounded",
   }
 
-  local enter = opts.enter == nil and true or opts.enter
+  local enter = true
 
-  local win = vim.api.nvim_open_win(buf, enter, opts.opts or win_config)
+  if opts.enter ~= nil then
+    enter = opts.enter
+  end
+
+  local win = vim.api.nvim_open_win(buf, enter or true, opts.opts or win_config)
 
   return { buf = buf, win = win }
 end
